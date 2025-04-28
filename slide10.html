@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Modificadores de campos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .modifiers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .modifier-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00758F;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .modifier-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .modifier-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .modifier-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 117, 143, 0.3);
+            flex-shrink: 0;
+        }
+        .modifier-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00758F;
+        }
+        .modifier-description {
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .code-example {
+            margin-top: 1.5rem;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        .code-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .code-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow-x: auto;
+        }
+        .code-keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+        .code-string {
+            color: #86efac;
+        }
+        .code-number {
+            color: #fca5a5;
+        }
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .code-modifier {
+            color: #f9a8d4;
+            font-weight: 600;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+        .code-line {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .code-highlight {
+            background: rgba(249, 168, 212, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-2">
+                <i class="fas fa-tools header-icon"></i>
+                <h1 class="title">Modificadores de campos</h1>
+            </div>
+            
+            <div class="modifiers-grid">
+                <!-- AUTO_INCREMENT -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-sort-numeric-up"></i>
+                        </div>
+                        <h3 class="modifier-title">AUTO_INCREMENT</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Incrementa automáticamente el valor con cada registro nuevo. Ideal para claves primarias, asegurando que cada registro tenga un identificador único.
+                    </div>
+                </div>
+                
+                <!-- DEFAULT -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-pen"></i>
+                        </div>
+                        <h3 class="modifier-title">DEFAULT</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Asigna un valor por defecto al campo cuando no se especifica un valor durante la inserción. Útil para campos con valores comunes o predeterminados.
+                    </div>
+                </div>
+                
+                <!-- NOT NULL -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3 class="modifier-title">NOT NULL</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Impide que un campo sea nulo. Garantiza que el campo siempre tenga un valor, lo que mejora la integridad de los datos y facilita las consultas.
+                    </div>
+                </div>
+                
+                <!-- PRIMARY KEY -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h3 class="modifier-title">PRIMARY KEY</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Define el campo como llave primaria de la tabla. Identifica de manera única cada registro y crea automáticamente un índice para mejorar el rendimiento de las consultas.
+                    </div>
+                </div>
+                
+                <!-- UNIQUE -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h3 class="modifier-title">UNIQUE</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Evita la repetición de valores en un campo. Similar a PRIMARY KEY pero permite valores NULL y puede aplicarse a múltiples columnas en una tabla.
+                    </div>
+                </div>
+                
+                <!-- FOREIGN KEY -->
+                <div class="modifier-card">
+                    <div class="modifier-header">
+                        <div class="modifier-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3 class="modifier-title">FOREIGN KEY</h3>
+                    </div>
+                    <div class="modifier-description">
+                        Establece una relación con otra tabla. Garantiza la integridad referencial, permitiendo que un campo solo contenga valores que existan en la tabla referenciada.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-example">
+                <div class="code-header">
+                    <i class="fas fa-code"></i>
+                    <div class="code-title">Ejemplo de SQL con modificadores</div>
+                </div>
+                <div class="code-content">
+                    <span class="code-line"><span class="code-keyword">CREATE TABLE</span> Empleados (</span>
+                    <span class="code-line">    <span class="code-highlight">EmpleadoID <span class="code-keyword">INT</span> <span class="code-modifier">AUTO_INCREMENT</span> <span class="code-modifier">PRIMARY KEY</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight">Nombre <span class="code-keyword">VARCHAR</span>(50) <span class="code-modifier">NOT NULL</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight">Apellido <span class="code-keyword">VARCHAR</span>(50) <span class="code-modifier">NOT NULL</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight">Email <span class="code-keyword">VARCHAR</span>(100) <span class="code-modifier">UNIQUE</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight">FechaContrato <span class="code-keyword">DATE</span> <span class="code-modifier">NOT NULL</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight">Salario <span class="code-keyword">DECIMAL</span>(10,2) <span class="code-modifier">DEFAULT</span> 0.00</span>,</span>
+                    <span class="code-line">    <span class="code-highlight">DepartamentoID <span class="code-keyword">INT</span></span>,</span>
+                    <span class="code-line">    <span class="code-highlight"><span class="code-modifier">FOREIGN KEY</span> (DepartamentoID) <span class="code-keyword">REFERENCES</span> Departamentos(DepartamentoID)</span></span>
+                    <span class="code-line">);</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide9.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide11.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

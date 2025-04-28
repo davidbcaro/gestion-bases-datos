@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Tipos de datos: Cadenas de caracteres</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .types-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+        .type-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00758F;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .type-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .type-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 117, 143, 0.3);
+            flex-shrink: 0;
+        }
+        .type-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00758F;
+        }
+        .type-description {
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .example-tag {
+            background: rgba(0, 117, 143, 0.1);
+            color: #005E73;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.75rem;
+            display: inline-block;
+            font-family: monospace;
+        }
+        .examples-section {
+            margin-top: 1.5rem;
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #00758F;
+        }
+        .examples-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .example-item {
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+        }
+        .example-item:hover {
+            background: rgba(0, 117, 143, 0.03);
+        }
+        .example-code {
+            background: rgba(0, 117, 143, 0.1);
+            color: #00758F;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .example-text {
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-2">
+                <i class="fas fa-font header-icon"></i>
+                <h1 class="title">Tipos de datos: Cadenas de caracteres</h1>
+            </div>
+            
+            <div class="types-container">
+                <!-- CHAR -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-ruler"></i>
+                        </div>
+                        <h3 class="type-title">CHAR(M)</h3>
+                    </div>
+                    <div class="type-description">
+                        Cadena de longitud fija de 0 a 255 caracteres. Se rellena con espacios a la derecha para mantener la longitud constante. Estos espacios se eliminan al recuperar el valor.
+                    </div>
+                    <div class="example-tag">
+                        CHAR(10)
+                    </div>
+                </div>
+                
+                <!-- VARCHAR -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-text-width"></i>
+                        </div>
+                        <h3 class="type-title">VARCHAR(M)</h3>
+                    </div>
+                    <div class="type-description">
+                        Cadena de longitud variable, máximo 65,535 caracteres. Solo almacena lo necesario y elimina espacios al final. Más eficiente que CHAR para textos de longitud variable.
+                    </div>
+                    <div class="example-tag">
+                        VARCHAR(50)
+                    </div>
+                </div>
+                
+                <!-- TEXT -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-align-left"></i>
+                        </div>
+                        <h3 class="type-title">TEXT</h3>
+                    </div>
+                    <div class="type-description">
+                        Longitud máxima de 65,535 caracteres. Ideal para texto plano sin formato. Distingue entre mayúsculas y minúsculas. No se puede definir valor por defecto.
+                    </div>
+                    <div class="example-tag">
+                        TEXT
+                    </div>
+                </div>
+                
+                <!-- BLOB -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-file-image"></i>
+                        </div>
+                        <h3 class="type-title">BLOB</h3>
+                    </div>
+                    <div class="type-description">
+                        Binary Large OBject. Longitud máxima de 65,535 bytes. Almacena datos binarios como imágenes, archivos de texto, audio o video.
+                    </div>
+                    <div class="example-tag">
+                        BLOB
+                    </div>
+                </div>
+                
+                <!-- ENUM -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        <h3 class="type-title">ENUM</h3>
+                    </div>
+                    <div class="type-description">
+                        Almacena un único valor de una lista predefinida. Útil para campos con un conjunto limitado de valores posibles. Internamente se almacena como números.
+                    </div>
+                    <div class="example-tag">
+                        ENUM('valor1','valor2',...)
+                    </div>
+                </div>
+                
+                <!-- SET -->
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <h3 class="type-title">SET</h3>
+                    </div>
+                    <div class="type-description">
+                        Contiene cero o más valores, cada uno de los cuales debe estar entre una lista predefinida. Permite selección múltiple, a diferencia de ENUM.
+                    </div>
+                    <div class="example-tag">
+                        SET('valor1','valor2',...)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="examples-section">
+                <div class="examples-title">
+                    <i class="fas fa-code mysql-blue mr-2"></i>Ejemplos de uso
+                </div>
+                <div class="examples-grid">
+                    <div class="example-item">
+                        <div class="example-code">CHAR(10)</div>
+                        <div class="example-text">Ideal para códigos de identificación como DNI o RUT de longitud fija</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-code">VARCHAR(50)</div>
+                        <div class="example-text">Perfecto para nombres, direcciones o datos con longitud variable</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-code">TEXT</div>
+                        <div class="example-text">Para descripciones largas, comentarios o bloques de texto extensos</div>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-code">ENUM('M','F')</div>
+                        <div class="example-text">Eficiente para almacenar el género de una persona (Masculino/Femenino)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide7.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide9.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

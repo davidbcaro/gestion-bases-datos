@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Tipos de datos numéricos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .datatypes-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .datatype-card {
+            flex: 1;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid #00758F;
+            transition: all 0.3s ease;
+        }
+        .datatype-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .datatype-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .datatype-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 10px rgba(0, 117, 143, 0.3);
+        }
+        .datatype-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #00758F;
+        }
+        .datatype-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .datatype-table th {
+            text-align: left;
+            padding: 8px;
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .datatype-table td {
+            padding: 12px 8px;
+            background: rgba(0, 117, 143, 0.05);
+            font-size: 0.9rem;
+        }
+        .datatype-table tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            font-weight: 600;
+            color: #00758F;
+        }
+        .datatype-table tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .datatype-table tr:hover td {
+            background: rgba(0, 117, 143, 0.1);
+        }
+        .example-box {
+            margin-top: 1.5rem;
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #00758F;
+        }
+        .example-box-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 0.5rem;
+        }
+        .example-content {
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        .highlight {
+            background: rgba(0, 117, 143, 0.1);
+            color: #00758F;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-2">
+                <i class="fas fa-hashtag header-icon"></i>
+                <h1 class="title">Tipos de datos: Numéricos</h1>
+            </div>
+            
+            <div class="datatypes-container">
+                <!-- Tipos enteros -->
+                <div class="datatype-card">
+                    <div class="datatype-header">
+                        <div class="datatype-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 class="datatype-title">Tipos enteros</h3>
+                    </div>
+                    
+                    <table class="datatype-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Bytes</th>
+                                <th>Rango (Con signo / Sin signo)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TINYINT</td>
+                                <td>1</td>
+                                <td>-128 a 127 / 0 a 255</td>
+                            </tr>
+                            <tr>
+                                <td>SMALLINT</td>
+                                <td>2</td>
+                                <td>-32,768 a 32,767 / 0 a 65,535</td>
+                            </tr>
+                            <tr>
+                                <td>MEDIUMINT</td>
+                                <td>3</td>
+                                <td>-8,388,608 a 8,388,607 / 0 a 16,777,215</td>
+                            </tr>
+                            <tr>
+                                <td>INT</td>
+                                <td>4</td>
+                                <td>-2,147,483,648 a 2,147,483,647 / 0 a 4,294,967,295</td>
+                            </tr>
+                            <tr>
+                                <td>BIGINT</td>
+                                <td>8</td>
+                                <td>-9,223,372,036,854,775,808 a 9,223,372,036,854,775,807</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="example-box">
+                        <div class="example-box-title">
+                            <i class="fas fa-lightbulb mysql-blue mr-2"></i>Ejemplo práctico
+                        </div>
+                        <div class="example-content">
+                            Para almacenar <strong>edades de personas</strong> (máximo 100), es suficiente con usar <span class="highlight">TINYINT</span>, optimizando así el espacio de almacenamiento y mejorando el rendimiento.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tipos en coma flotante -->
+                <div class="datatype-card">
+                    <div class="datatype-header">
+                        <div class="datatype-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h3 class="datatype-title">Tipos en coma flotante</h3>
+                    </div>
+                    
+                    <table class="datatype-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FLOAT(m,d)</td>
+                                <td>
+                                    Número de precisión sencilla. 
+                                    <br>M = anchura a mostrar, D = número de decimales.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DOUBLE(m,d)</td>
+                                <td>
+                                    Número de precisión doble. 
+                                    <br>Mayor rango de valores y precisión que FLOAT.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DECIMAL(m,d)</td>
+                                <td>
+                                    Almacena valores con precisión exacta.
+                                    <br>Ideal para datos monetarios donde la precisión es crucial.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="example-box">
+                        <div class="example-box-title">
+                            <i class="fas fa-lightbulb mysql-blue mr-2"></i>Ejemplo práctico
+                        </div>
+                        <div class="example-content">
+                            Para almacenar <strong>notas académicas</strong> con valores entre 0.00 y 10.00, se puede usar <span class="highlight">FLOAT(4,2)</span>.
+                            <br>
+                            Para <strong>valores monetarios</strong> como precios o salarios, es recomendable usar <span class="highlight">DECIMAL(10,2)</span> para asegurar precisión exacta.
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-xs text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i> BIT es equivalente a TINYINT(1) y almacena valores de 0 o 1 (también se puede usar para valores booleanos).
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide6.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide8.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

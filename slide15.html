@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Inserción de registros</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -8px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 4rem;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+        .section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00758F;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .code-block {
+            font-family: 'Source Code Pro', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+            font-size: 0.8rem;
+        }
+        .sql-keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+        .sql-param {
+            color: #fca5a5;
+            font-style: italic;
+        }
+        .sql-value {
+            color: #86efac;
+        }
+        .sql-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .data-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .data-type-item {
+            display: flex;
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 8px;
+            padding: 0.5rem;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .data-type-item:hover {
+            background: rgba(0, 117, 143, 0.1);
+            transform: translateX(3px);
+        }
+        .data-type-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #00758F;
+            color: white;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .data-type-content {
+            flex: 1;
+        }
+        .data-type-name {
+            font-weight: 600;
+            color: #00758F;
+            font-size: 0.8rem;
+        }
+        .data-type-description {
+            font-size: 0.7rem;
+            color: #4a5568;
+        }
+        .footer {
+            padding: 0.8rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 0.8rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+        .note-box {
+            background: rgba(0, 117, 143, 0.05);
+            border-left: 3px solid #00758F;
+            padding: 0.5rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.75rem;
+            color: #4a5568;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .note-icon {
+            color: #00758F;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .tabs-container {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 117, 143, 0.2);
+            margin-bottom: 0.5rem;
+        }
+        .tab {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .tab.active {
+            color: #00758F;
+            border-bottom: 2px solid #00758F;
+        }
+        .examples-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .example-pill {
+            background: rgba(0, 117, 143, 0.08);
+            border-radius: 16px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            color: #00758F;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .example-pill i {
+            margin-right: 0.3rem;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-3">
+                <i class="fas fa-plus-circle header-icon"></i>
+                <h1 class="title">Inserción de registros</h1>
+            </div>
+            
+            <div class="main-container">
+                <div>
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-code mysql-blue mr-2"></i>Sintaxis y ejemplos
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-keyword">INSERT INTO</span> <span class="sql-param">tabla</span> (<span class="sql-param">campo1</span>, <span class="sql-param">campo2</span>, ...)
+                            <br><span class="sql-keyword">VALUES</span> (<span class="sql-param">valor1</span>, <span class="sql-param">valor2</span>, ...);
+                        </div>
+                        
+                        <div class="examples-container mt-2">
+                            <div class="example-pill"><i class="fas fa-check-circle"></i>Inserción simple</div>
+                            <div class="example-pill"><i class="fas fa-layer-group"></i>Múltiples registros</div>
+                            <div class="example-pill"><i class="fas fa-link"></i>Con clave foránea</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="tabs-container">
+                            <div class="tab active">Inserción simple</div>
+                            <div class="tab">Inserción múltiple</div>
+                        </div>
+                        
+                        <div class="code-block">
+                            <span class="sql-keyword">INSERT INTO</span> Empleados (Nombre, Apellido, Email)
+                            <br><span class="sql-keyword">VALUES</span> (<span class="sql-value">'Juan'</span>, <span class="sql-value">'Pérez'</span>, <span class="sql-value">'juan@ejemplo.com'</span>);
+                            <br>
+                            <br><span class="sql-comment">-- Resultado de consulta posterior</span>
+                            <br>| EmpleadoID | Nombre | Apellido | Email            |
+                            <br>|------------|--------|----------|------------------|
+                            <br>| 1          | Juan   | Pérez    | juan@ejemplo.com |
+                        </div>
+                        
+                        <div class="note-box">
+                            <i class="fas fa-lightbulb note-icon"></i>
+                            <div>Para insertar múltiples registros en una sola sentencia: <code>INSERT INTO tabla VALUES (...), (...), (...);</code></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-exclamation-triangle mysql-blue mr-2"></i>Consideraciones por tipo de dato
+                        </div>
+                        
+                        <div class="data-types">
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-font"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">Textos</div>
+                                    <div class="data-type-description"><code>'texto'</code></div>
+                                </div>
+                            </div>
+                            
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-hashtag"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">Números</div>
+                                    <div class="data-type-description"><code>123</code>, <code>45.67</code></div>
+                                </div>
+                            </div>
+                            
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">Fechas</div>
+                                    <div class="data-type-description"><code>'AAAA-MM-DD'</code></div>
+                                </div>
+                            </div>
+                            
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">Horas</div>
+                                    <div class="data-type-description"><code>'HH:MM:SS'</code></div>
+                                </div>
+                            </div>
+                            
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">NULL</div>
+                                    <div class="data-type-description">Sin comillas</div>
+                                </div>
+                            </div>
+                            
+                            <div class="data-type-item">
+                                <div class="data-type-icon">
+                                    <i class="fas fa-infinity"></i>
+                                </div>
+                                <div class="data-type-content">
+                                    <div class="data-type-name">AUTO_INCREMENT</div>
+                                    <div class="data-type-description">Automático</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-link mysql-blue mr-2"></i>Inserción con llaves foráneas
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-comment">-- Primero en la tabla principal</span>
+                            <br><span class="sql-keyword">INSERT INTO</span> Clientes (Nombre) <span class="sql-keyword">VALUES</span> (<span class="sql-value">'Pedro Sánchez'</span>);
+                            <br>
+                            <br><span class="sql-comment">-- Luego en la tabla relacionada</span>
+                            <br><span class="sql-keyword">INSERT INTO</span> Ventas (ClienteID, Total)
+                            <br><span class="sql-keyword">VALUES</span> (
+                            <br>&nbsp;&nbsp;(<span class="sql-keyword">SELECT</span> ClienteID <span class="sql-keyword">FROM</span> Clientes <span class="sql-keyword">WHERE</span> Nombre = <span class="sql-value">'Pedro Sánchez'</span>),
+                            <br>&nbsp;&nbsp;1250.75
+                            <br>);
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-info-circle mysql-blue mr-2"></i>Recomendaciones
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <div class="example-pill"><i class="fas fa-check"></i>Especificar siempre los campos</div>
+                            <div class="example-pill"><i class="fas fa-check"></i>Verificar integridad referencial</div>
+                            <div class="example-pill"><i class="fas fa-check"></i>Validar tipos de datos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide14.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide16.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

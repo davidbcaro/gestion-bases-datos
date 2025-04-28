@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Consultas básicas - SELECT</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00758F;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        .code-block {
+            font-family: 'Source Code Pro', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.5;
+            font-size: 0.85rem;
+        }
+        .sql-keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+        .sql-param {
+            color: #fca5a5;
+            font-style: italic;
+        }
+        .sql-comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .result-table {
+            margin-top: 0.75rem;
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.85rem;
+        }
+        .result-table-header {
+            background: rgba(0, 117, 143, 0.2);
+            color: #00758F;
+            font-weight: 600;
+            padding: 0.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        }
+        .result-table-body {
+            padding: 0.5rem;
+        }
+        .result-table-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            border-bottom: 1px solid rgba(0, 117, 143, 0.1);
+            padding: 0.3rem 0;
+        }
+        .result-table-row:last-child {
+            border-bottom: none;
+        }
+        .query-examples {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        .query-example {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        .query-example:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .query-title {
+            background: rgba(0, 117, 143, 0.15);
+            color: #00758F;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #00758F;
+        }
+        .query-code {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+        .query-keyword {
+            color: #00758F;
+            font-weight: 600;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+        .note-box {
+            background: rgba(0, 117, 143, 0.05);
+            border-left: 3px solid #00758F;
+            padding: 0.75rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.85rem;
+            color: #4a5568;
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .note-icon {
+            color: #00758F;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-4">
+                <i class="fas fa-search header-icon"></i>
+                <h1 class="title">Consultas básicas - SELECT</h1>
+            </div>
+            
+            <div class="main-container">
+                <div>
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-code mysql-blue mr-2"></i>Sintaxis básica
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-keyword">SELECT</span> <span class="sql-param">columnas</span> 
+                            <br><span class="sql-keyword">FROM</span> <span class="sql-param">tabla</span> 
+                            <br><span class="sql-keyword">WHERE</span> <span class="sql-param">condiciones</span>;
+                        </div>
+                        
+                        <div class="note-box">
+                            <i class="fas fa-lightbulb note-icon"></i>
+                            <div>La sentencia SELECT es la más utilizada en SQL y permite recuperar datos almacenados en las tablas de la base de datos.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-laptop-code mysql-blue mr-2"></i>Ejemplo completo
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-keyword">SELECT</span> Nombre, Apellido, Email 
+                            <br><span class="sql-keyword">FROM</span> Clientes 
+                            <br><span class="sql-keyword">WHERE</span> Ciudad = <span class="sql-param">'Madrid'</span> 
+                            <br><span class="sql-keyword">ORDER BY</span> Apellido 
+                            <br><span class="sql-keyword">LIMIT</span> 3;
+                        </div>
+                        
+                        <div class="result-table">
+                            <div class="result-table-header">
+                                <div>Nombre</div>
+                                <div>Apellido</div>
+                                <div>Email</div>
+                            </div>
+                            <div class="result-table-body">
+                                <div class="result-table-row">
+                                    <div>Ana</div>
+                                    <div>Gómez</div>
+                                    <div>ana.gomez@email.com</div>
+                                </div>
+                                <div class="result-table-row">
+                                    <div>Luis</div>
+                                    <div>Martínez</div>
+                                    <div>luis.m@email.com</div>
+                                </div>
+                                <div class="result-table-row">
+                                    <div>María</div>
+                                    <div>Rodríguez</div>
+                                    <div>maria.r@email.com</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-list mysql-blue mr-2"></i>Tipos de consultas básicas
+                        </div>
+                        
+                        <div class="query-examples">
+                            <div class="query-example">
+                                <div class="query-title">
+                                    <i class="fas fa-asterisk mr-1"></i>Seleccionar todos los campos
+                                </div>
+                                <div class="query-code">
+                                    <span class="query-keyword">SELECT</span> * <span class="query-keyword">FROM</span> Clientes;
+                                </div>
+                            </div>
+                            
+                            <div class="query-example">
+                                <div class="query-title">
+                                    <i class="fas fa-columns mr-1"></i>Seleccionar campos específicos
+                                </div>
+                                <div class="query-code">
+                                    <span class="query-keyword">SELECT</span> Nombre, Apellido, Email <span class="query-keyword">FROM</span> Clientes;
+                                </div>
+                            </div>
+                            
+                            <div class="query-example">
+                                <div class="query-title">
+                                    <i class="fas fa-sort-numeric-down mr-1"></i>Limitar resultados
+                                </div>
+                                <div class="query-code">
+                                    <span class="query-keyword">SELECT</span> * <span class="query-keyword">FROM</span> Clientes <span class="query-keyword">LIMIT</span> 5;
+                                </div>
+                            </div>
+                            
+                            <div class="query-example">
+                                <div class="query-title">
+                                    <i class="fas fa-tags mr-1"></i>Usar alias para campos
+                                </div>
+                                <div class="query-code">
+                                    <span class="query-keyword">SELECT</span> Nombre <span class="query-keyword">AS</span> Nombre_Cliente, 
+                                    Apellido <span class="query-keyword">AS</span> Apellido_Cliente 
+                                    <span class="query-keyword">FROM</span> Clientes;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-filter mysql-blue mr-2"></i>Filtrado con WHERE
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-keyword">SELECT</span> * 
+                            <br><span class="sql-keyword">FROM</span> Productos 
+                            <br><span class="sql-keyword">WHERE</span> Precio > 100 
+                            <br><span class="sql-keyword">AND</span> Categoria = <span class="sql-param">'Electrónica'</span>;
+                        </div>
+                        
+                        <div class="note-box">
+                            <i class="fas fa-info-circle note-icon"></i>
+                            <div>La cláusula <strong>WHERE</strong> permite filtrar registros según condiciones específicas. Podemos utilizar operadores lógicos como <strong>AND</strong>, <strong>OR</strong> y <strong>NOT</strong> para crear condiciones complejas.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">
+                            <i class="fas fa-sort-amount-down mysql-blue mr-2"></i>Ordenamiento de resultados
+                        </div>
+                        <div class="code-block">
+                            <span class="sql-keyword">SELECT</span> * 
+                            <br><span class="sql-keyword">FROM</span> Empleados 
+                            <br><span class="sql-keyword">ORDER BY</span> Salario <span class="sql-keyword">DESC</span>, Apellido <span class="sql-keyword">ASC</span>;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide15.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+        </div>
+    </div>
+</body>
+</html>

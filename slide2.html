@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Contenidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 3rem 4rem;
+        }
+        .toc-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .toc-column {
+            flex: 1;
+            min-width: 300px;
+            padding: 0 1.5rem;
+        }
+        .toc-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+        .toc-item:hover {
+            background: rgba(0, 117, 143, 0.05);
+            transform: translateX(5px);
+        }
+        .toc-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 32px;
+            height: 32px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0, 117, 143, 0.3);
+        }
+        .toc-text {
+            font-size: 1.2rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-6">
+                <i class="fas fa-list-ul header-icon"></i>
+                <h1 class="title">Contenidos</h1>
+            </div>
+            
+            <div class="toc-container">
+                <div class="toc-column">
+                    <div class="toc-item">
+                        <div class="toc-number">1</div>
+                        <div class="toc-text">Introducción a MySQL</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">2</div>
+                        <div class="toc-text">Características principales</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">3</div>
+                        <div class="toc-text">Componentes de MySQL</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">4</div>
+                        <div class="toc-text">Motores de almacenamiento</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">5</div>
+                        <div class="toc-text">Tipos de datos</div>
+                    </div>
+                </div>
+                
+                <div class="toc-column">
+                    <div class="toc-item">
+                        <div class="toc-number">6</div>
+                        <div class="toc-text">Creación de bases de datos</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">7</div>
+                        <div class="toc-text">Creación y modificación de tablas</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">8</div>
+                        <div class="toc-text">Consultas básicas</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">9</div>
+                        <div class="toc-text">Consultas avanzadas y JOIN</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">10</div>
+                        <div class="toc-text">Subconsultas</div>
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-number">11</div>
+                        <div class="toc-text">Consideraciones de seguridad</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="index.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide3.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

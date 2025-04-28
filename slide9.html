@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Tipos de datos: Fecha y Hora</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .type-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid #00758F;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .type-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin: 0 auto 0.75rem;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 10px rgba(0, 117, 143, 0.3);
+        }
+        .type-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00758F;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .type-format {
+            background: rgba(0, 117, 143, 0.1);
+            color: #005E73;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            display: inline-block;
+            font-family: monospace;
+            text-align: center;
+        }
+        .type-description {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .type-range {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        .examples-section {
+            margin-top: 1.5rem;
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid #00758F;
+        }
+        .examples-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .example-item {
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .example-item:hover {
+            background: rgba(0, 117, 143, 0.03);
+            transform: translateX(5px);
+        }
+        .example-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 117, 143, 0.1);
+            color: #00758F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+        .example-content {
+            flex: 1;
+        }
+        .example-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        .example-type {
+            font-family: monospace;
+            color: #00758F;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-2">
+                <i class="fas fa-calendar-alt header-icon"></i>
+                <h1 class="title">Tipos de datos: Fecha y Hora</h1>
+            </div>
+            
+            <div class="types-grid">
+                <!-- DATE -->
+                <div class="type-card">
+                    <div class="type-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h3 class="type-title">DATE</h3>
+                    <div class="type-format mx-auto">AAAA-MM-DD</div>
+                    <div class="type-description">
+                        Almacena una fecha con año, mes y día. Ideal para fechas de nacimiento, contratación, etc.
+                    </div>
+                    <div class="type-range">
+                        Rango: '1000-01-01' a '9999-12-31'
+                    </div>
+                </div>
+                
+                <!-- DATETIME -->
+                <div class="type-card">
+                    <div class="type-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <h3 class="type-title">DATETIME</h3>
+                    <div class="type-format mx-auto">AAAA-MM-DD HH:MM:SS</div>
+                    <div class="type-description">
+                        Almacena una fecha y hora completa. Perfecto para registros de eventos, auditorías, logs, etc.
+                    </div>
+                    <div class="type-range">
+                        Rango: '1000-01-01 00:00:00' a '9999-12-31 23:59:59'
+                    </div>
+                </div>
+                
+                <!-- TIME -->
+                <div class="type-card">
+                    <div class="type-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="type-title">TIME</h3>
+                    <div class="type-format mx-auto">HH:MM:SS</div>
+                    <div class="type-description">
+                        Almacena solo la hora, sin componente de fecha. Útil para horarios de atención, duración, etc.
+                    </div>
+                    <div class="type-range">
+                        Rango: '-838:59:59' a '838:59:59'
+                    </div>
+                </div>
+                
+                <!-- TIMESTAMP -->
+                <div class="type-card">
+                    <div class="type-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <h3 class="type-title">TIMESTAMP</h3>
+                    <div class="type-format mx-auto">AAAA-MM-DD HH:MM:SS</div>
+                    <div class="type-description">
+                        Almacena fecha y hora UTC. Se convierte automáticamente de la zona horaria actual a UTC.
+                    </div>
+                    <div class="type-range">
+                        Rango: '1970-01-01 00:00:00' a año 2038
+                    </div>
+                </div>
+                
+                <!-- YEAR -->
+                <div class="type-card">
+                    <div class="type-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <h3 class="type-title">YEAR</h3>
+                    <div class="type-format mx-auto">AAAA o AA</div>
+                    <div class="type-description">
+                        Almacena solo el año con 2 o 4 dígitos (predeterminado 4). Eficiente para años de publicación, lanzamientos, etc.
+                    </div>
+                    <div class="type-range">
+                        Rango 4 dígitos: 1901 a 2155<br>
+                        Rango 2 dígitos: 1970 a 2069
+                    </div>
+                </div>
+            </div>
+            
+            <div class="examples-section">
+                <div class="examples-title">
+                    <i class="fas fa-lightbulb mysql-blue mr-2"></i>Ejemplos prácticos
+                </div>
+                <div class="examples-grid">
+                    <div class="example-item">
+                        <div class="example-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-name">Control de acceso a un sistema</div>
+                            <div class="example-type">DATETIME</div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-item">
+                        <div class="example-icon">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-name">Fecha de nacimiento</div>
+                            <div class="example-type">DATE</div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-item">
+                        <div class="example-icon">
+                            <i class="fas fa-business-time"></i>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-name">Horario de atención</div>
+                            <div class="example-type">TIME</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide8.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide10.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+</body>
+</html>

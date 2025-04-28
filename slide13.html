@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL: Fundamentos de Bases de Datos - Claves Primarias y Foráneas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .top-accent {
+            height: 8px;
+            background: linear-gradient(90deg, #00758F 0%, #005E73 100%);
+        }
+        .mysql-blue {
+            color: #00758F;
+        }
+        .mysql-dark-blue {
+            color: #005E73;
+        }
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00758F;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        .title:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #00758F 0%, rgba(0, 94, 115, 0.3) 100%);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 4rem;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .key-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00758F;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .key-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .key-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: #00758F;
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 117, 143, 0.3);
+        }
+        .key-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00758F;
+        }
+        .key-description {
+            font-size: 0.95rem;
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        .bullet-points {
+            margin-left: 1rem;
+        }
+        .bullet-point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .bullet-icon {
+            color: #00758F;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+        .code-block {
+            font-family: 'Source Code Pro', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.5;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        .sql-keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+        .sql-modifier {
+            color: #f9a8d4;
+            font-weight: 600;
+        }
+        .sql-datatype {
+            color: #a5b4fc;
+        }
+        .diagram-container {
+            background: rgba(0, 117, 143, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .diagram-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00758F;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .footer {
+            padding: 1rem 4rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .decorative-element {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: #00758F;
+            top: -250px;
+            right: -250px;
+        }
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #005E73;
+            bottom: -150px;
+            left: -150px;
+        }
+        .header-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #00758F;
+            opacity: 0.8;
+        }
+        .mermaid {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="top-accent"></div>
+        
+        <!-- Decorative elements -->
+        <div class="decorative-element circle-1"></div>
+        <div class="decorative-element circle-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="text-center mb-4">
+                <i class="fas fa-key header-icon"></i>
+                <h1 class="title">Claves Primarias y Foráneas</h1>
+            </div>
+            
+            <div class="main-container">
+                <!-- Primary Key Section -->
+                <div class="key-card">
+                    <div class="key-header">
+                        <div class="key-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h3 class="key-title">Clave Primaria</h3>
+                    </div>
+                    <div class="key-description">
+                        Identifica de manera única cada registro en una tabla. Es una regla fundamental para mantener la integridad de los datos.
+                    </div>
+                    <div class="bullet-points">
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>No puede contener valores NULL</span>
+                        </div>
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>Generalmente se usa con AUTO_INCREMENT</span>
+                        </div>
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>Crea automáticamente un índice para optimizar búsquedas</span>
+                        </div>
+                    </div>
+                    <div class="code-block">
+                        <span class="sql-keyword">CREATE TABLE</span> Empleados (
+                        <br>&nbsp;&nbsp;ID_Empleado <span class="sql-datatype">INT</span> <span class="sql-modifier">AUTO_INCREMENT</span>,
+                        <br>&nbsp;&nbsp;Nombre <span class="sql-datatype">VARCHAR</span>(50) <span class="sql-modifier">NOT NULL</span>,
+                        <br>&nbsp;&nbsp;Email <span class="sql-datatype">VARCHAR</span>(100) <span class="sql-modifier">UNIQUE</span>,
+                        <br>&nbsp;&nbsp;<span class="sql-modifier">PRIMARY KEY</span> (ID_Empleado)
+                        <br>);
+                    </div>
+                </div>
+                
+                <!-- Foreign Key Section -->
+                <div class="key-card">
+                    <div class="key-header">
+                        <div class="key-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3 class="key-title">Clave Foránea</h3>
+                    </div>
+                    <div class="key-description">
+                        Establece relaciones entre tablas y garantiza la integridad referencial de la base de datos.
+                    </div>
+                    <div class="bullet-points">
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>Apunta a una clave primaria en otra tabla</span>
+                        </div>
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>Evita referencias huérfanas o inconsistentes</span>
+                        </div>
+                        <div class="bullet-point">
+                            <i class="fas fa-check-circle bullet-icon"></i>
+                            <span>Permite definir comportamientos CASCADE, RESTRICT, etc.</span>
+                        </div>
+                    </div>
+                    <div class="code-block">
+                        <span class="sql-keyword">CREATE TABLE</span> Ventas (
+                        <br>&nbsp;&nbsp;VentaID <span class="sql-datatype">INT</span> <span class="sql-modifier">AUTO_INCREMENT</span>,
+                        <br>&nbsp;&nbsp;ClienteID <span class="sql-datatype">INT</span> <span class="sql-modifier">NOT NULL</span>,
+                        <br>&nbsp;&nbsp;Fecha <span class="sql-datatype">DATE</span> <span class="sql-modifier">NOT NULL</span>,
+                        <br>&nbsp;&nbsp;Total <span class="sql-datatype">DECIMAL</span>(10,2) <span class="sql-modifier">NOT NULL</span>,
+                        <br>&nbsp;&nbsp;<span class="sql-modifier">PRIMARY KEY</span> (VentaID),
+                        <br>&nbsp;&nbsp;<span class="sql-modifier">FOREIGN KEY</span> (ClienteID) <span class="sql-keyword">REFERENCES</span> Clientes(ClienteID)
+                        <br>);
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Relationship Diagram -->
+            <div class="diagram-container">
+                <div class="diagram-title">
+                    <i class="fas fa-project-diagram mysql-blue mr-2"></i>
+                    Ejemplo de relación entre tablas
+                </div>
+                <div class="mermaid" style="height: 200px; overflow: visible;">
+                    erDiagram
+                        CLIENTES ||--o{ VENTAS : realiza
+                        CLIENTES {
+                            int ClienteID PK
+                            varchar Nombre
+                            varchar Email
+                        }
+                        VENTAS {
+                            int VentaID PK
+                            int ClienteID FK
+                            date Fecha
+                            decimal Total
+                        }
+                        VENTAS ||--o{ DETALLES_VENTA : contiene
+                        DETALLES_VENTA {
+                            int DetalleID PK
+                            int VentaID FK
+                            int ProductoID FK
+                            int Cantidad
+                            decimal Precio
+                        }
+                        PRODUCTOS ||--o{ DETALLES_VENTA : incluido_en
+                        PRODUCTOS {
+                            int ProductoID PK
+                            varchar Nombre
+                            decimal Precio
+                        }
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>
+                <i class="fas fa-database mysql-blue mr-2"></i>
+                <span class="mysql-blue font-semibold">MySQL</span>
+            </div>
+            <p class="author" style="font-size: 1rem; color: #4a5568; margin-top: 0.5rem;">David Bohórquez</p>
+            <div>Abril 2025</div>
+        </div>
+         <!-- Navigation buttons -->
+         <div class="navigation-buttons" style="position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 1rem;">
+            <a href="slide12.html" class="btn-prev" style="padding: 0.5rem 1rem; background: #005E73; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                &larr; Atrás
+            </a>
+            <a href="slide14.html" class="btn-next" style="padding: 0.5rem 1rem; background: #00758F; color: white; text-decoration: none; border-radius: 5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Siguiente &rarr;
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
+            },
+            er: {
+                layoutDirection: 'LR',
+                entityPadding: 15,
+                fontSize: 16
+            }
+        });
+    </script>
+</body>
+</html>
